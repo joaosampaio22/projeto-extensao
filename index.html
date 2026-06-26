@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Henosis</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!--  CONFIGURAÇÃO INICIAL  -->
+<div id="screen-setup" class="screen">
+  <div class="setup-box">
+    <div class="logo-row">
+      <svg width="56" height="32" viewBox="0 0 56 30" fill="none">
+        <path d="M28 15 C23 6, 8 4, 4 15 C8 26, 23 24, 28 15" stroke="#7BA8A1" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M28 15 C33 6, 48 4, 52 15 C48 26, 33 24, 28 15" stroke="#C9A3A3" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="28" cy="5" r="3.5" fill="#F5EFE0"/>
+      </svg>
+      <h1>Henosis</h1>
+    </div>
+    <p class="setup-sub">Vamos organizar juntos a economia do casamento.</p>
+
+    <form id="form-setup">
+      <div class="form-group">
+        <label class="form-label">Nome do primeiro parceiro</label>
+        <input type="text" id="input-nome1" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nome do segundo parceiro</label>
+        <input type="text" id="input-nome2" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Saldo inicial (R$)</label>
+        <input type="number" id="input-saldo" class="form-input" min="0" step="0.01" value="0" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Limite de gastos mensal (R$)</label>
+        <input type="number" id="input-limite" class="form-input" min="0" step="0.01" value="0" required>
+      </div>
+      <button type="submit" class="btn btn-teal">Começar</button>
+    </form>
+  </div>
+</div>
+
+<!--  APP PRINCIPAL  -->
+<div id="app" class="app hidden">
+
+  <header class="app-bar">
+    <svg width="32" height="18" viewBox="0 0 56 30" fill="none">
+      <path d="M28 15 C23 6, 8 4, 4 15 C8 26, 23 24, 28 15" stroke="#7BA8A1" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M28 15 C33 6, 48 4, 52 15 C48 26, 33 24, 28 15" stroke="#C9A3A3" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="28" cy="5" r="3.5" fill="#F5EFE0"/>
+    </svg>
+    <span class="app-name">Henosis</span>
+  </header>
+
+  <main class="app-body">
+
+    <!--  DASHBOARD  -->
+    <section id="screen-dashboard" class="screen-content">
+      <div class="saldo-hero">
+        <div class="saldo-label">Saldo total do casal</div>
+        <div class="saldo-value" id="saldo-total">R$ 0,00</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="mini-card">
+          <div class="mini-label">Limite restante</div>
+          <div class="mini-value teal" id="limite-restante">R$ 0,00</div>
+          <div class="mini-sub" id="limite-total-sub">de R$ 0,00 no mês</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-label">Metas</div>
+          <div class="mini-value pink" id="metas-total">R$ 0,00</div>
+          <div class="mini-sub" id="metas-sub">0 metas ativas</div>
+        </div>
+      </div>
+
+      <div class="section-title">Metas em andamento</div>
+      <div id="metas-dashboard" class="metas-resumo">
+        <p class="vazio">Nenhuma meta criada ainda.</p>
+      </div>
+
+      <div class="section-title">Últimas movimentações</div>
+      <div id="ultimas-transacoes" class="hist-card">
+        <p class="vazio">Nenhuma movimentação registrada ainda.</p>
+      </div>
+    </section>
+
+    <!--  NOVA TRANSAÇÃO  -->
+    <section id="screen-transacao" class="screen-content hidden">
+      <div class="tab-row">
+        <div class="tab active" data-tipo="entrada">Entrada</div>
+        <div class="tab" data-tipo="saida">Saída</div>
+      </div>
+
+      <form id="form-transacao">
+        <div class="form-group">
+          <label class="form-label">Valor (R$)</label>
+          <input type="number" id="input-valor" class="form-input" min="0.01" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Descrição</label>
+          <input type="text" id="input-descricao" class="form-input" required placeholder="Ex: Salário, Aluguel...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Registrado por</label>
+          <select id="input-autor" class="form-input"></select>
+        </div>
+        <button type="submit" class="btn btn-teal" id="btn-transacao">Registrar entrada</button>
+      </form>
+    </section>
+
+    <!--METAS-->
+    <section id="screen-metas" class="screen-content hidden">
+      <button id="btn-nova-meta" class="btn btn-pink">+ Nova meta</button>
+
+      <div id="lista-metas" class="metas-lista">
+        <p class="vazio">Nenhuma meta criada ainda.</p>
+      </div>
+    </section>
+
+    <!--  NOVA META -->
+    <section id="screen-nova-meta" class="screen-content hidden">
+      <form id="form-nova-meta">
+        <div class="form-group">
+          <label class="form-label">Nome da meta</label>
+          <input type="text" id="input-meta-nome" class="form-input" required placeholder="Ex: Buffet, Lua de mel...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor-alvo (R$)</label>
+          <input type="number" id="input-meta-valor" class="form-input" min="1" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor da meta</label>
+          <select id="input-meta-cor" class="form-input">
+            <option value="#7BA8A1">Teal</option>
+            <option value="#C9A3A3">Rosa</option>
+            <option value="#8A8AAA">Lilás</option>
+            <option value="#C9A36B">Dourado</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-pink">Criar meta</button>
+        <button type="button" id="btn-cancelar-meta" class="btn btn-outline">Cancelar</button>
+      </form>
+    </section>
+
+    <!--ALOCAR DINHEIRO-->
+    <section id="screen-alocar" class="screen-content hidden">
+      <div class="alocar-info">
+        <div class="section-title">Meta selecionada</div>
+        <p class="config-text" id="alocar-nome-meta">—</p>
+        <p class="config-text" id="alocar-saldo-disponivel">—</p>
+      </div>
+      <form id="form-alocar">
+        <div class="form-group">
+          <label class="form-label">Valor a alocar (R$)</label>
+          <input type="number" id="input-alocar-valor" class="form-input" min="0.01" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Registrado por</label>
+          <select id="input-alocar-autor" class="form-input"></select>
+        </div>
+        <button type="submit" class="btn btn-teal">Confirmar alocação</button>
+        <button type="button" id="btn-cancelar-alocar" class="btn btn-outline">Cancelar</button>
+      </form>
+    </section>
+
+    <!--  HISTÓRICO  -->
+    <section id="screen-historico" class="screen-content hidden">
+      <div class="filtro-row">
+        <div class="filtro-tab active" data-filtro="todos">Todos</div>
+        <div class="filtro-tab" data-filtro="entrada">Entradas</div>
+        <div class="filtro-tab" data-filtro="saida">Saídas</div>
+        <div class="filtro-tab" data-filtro="alocacao">Metas</div>
+      </div>
+      <div id="lista-historico" class="hist-card">
+        <p class="vazio">Nenhuma movimentação registrada ainda.</p>
+      </div>
+    </section>
+
+    <!--  CONFIGURAÇÕES  -->
+    <section id="screen-config" class="screen-content hidden">
+      <div class="config-card">
+        <div class="section-title">Casal</div>
+        <p class="config-text" id="config-nomes">—</p>
+      </div>
+
+      <div class="config-card">
+        <div class="section-title">Limite mensal</div>
+        <p class="config-text" id="config-limite">—</p>
+        <div class="form-group">
+          <label class="form-label">Novo limite (R$)</label>
+          <input type="number" id="input-novo-limite" class="form-input" min="0" step="0.01">
+        </div>
+        <button id="btn-salvar-limite" class="btn btn-teal">Salvar novo limite</button>
+      </div>
+
+      <div class="config-card">
+        <div class="section-title">Mês</div>
+        <p class="config-text" id="config-mes">—</p>
+        <button id="btn-resetar-mes" class="btn btn-outline">Resetar mês</button>
+      </div>
+
+      <div class="config-card">
+        <div class="section-title">Dados</div>
+        <button id="btn-limpar" class="btn btn-danger">Apagar todos os dados</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-screen="dashboard"><span class="nav-icon">🏠</span>Início</button>
+    <button class="nav-item" data-screen="transacao"><span class="nav-icon">➕</span>Novo</button>
+    <button class="nav-item" data-screen="metas"><span class="nav-icon">🎯</span>Metas</button>
+    <button class="nav-item" data-screen="historico"><span class="nav-icon">📋</span>Histórico</button>
+    <button class="nav-item" data-screen="config"><span class="nav-icon">⚙️</span>Config</button>
+  </nav>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
